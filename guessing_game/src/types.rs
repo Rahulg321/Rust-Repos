@@ -1,4 +1,4 @@
-fn data_types() {
+pub fn data_types() {
     let x = 5;
 
     let x = x + 1;
