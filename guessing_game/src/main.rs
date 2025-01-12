@@ -1,144 +1,172 @@
+use core::slice;
 use rand::Rng;
 use std::cmp::Ordering;
+use std::f64::consts::PI;
 use std::io;
 
+mod loops;
+mod ownership;
+
 const _THREE_HOURS_IN_SECONDS: u32 = 60 * 60 * 3;
-fn main() {
-    another_function();
+
+#[derive(Debug)]
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
 }
 
-fn another_function() {
-    println!("calling another function")
+trait MathematicalObject {
+    fn print(&self);
+    fn calculate_perimeter(&self) -> f64;
+    fn calculate_area(&self) -> f64;
 }
 
-fn array_indexing() {
-    let months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ];
-
-    let a = [1, 2, 3, 4, 5];
-
-    let first = a[0];
-    let second = a[1];
-    println!("months are {:?}", months);
-    println!("first is {:?}", first);
-    println!("second is {:?}", second);
-
-    let mut userIndex = String::new();
-    println!("enter the index you want to access");
-    io::stdin()
-        .read_line(&mut userIndex)
-        .expect("could not read line for cmd");
-
-    let userIndex: usize = userIndex
-        .trim()
-        .parse()
-        .expect("please enter a valid number");
-
-    let element = a[userIndex];
-    println!("The value of the element at index {userIndex} is: {element}");
+struct Rectangle {
+    length: f64,
+    width: f64,
 }
 
-fn data_types() {
-    let x = 5;
+struct Square {
+    side: f64,
+}
 
-    let x = x + 1;
-
-    {
-        let x = x * 2;
-        println!("The value of x in the inner scope is: {x}");
+impl MathematicalObject for Rectangle {
+    fn calculate_perimeter(&self) -> f64 {
+        2.0 * (self.length + self.width)
     }
 
-    println!("The value of x is: {x}");
+    fn calculate_area(&self) -> f64 {
+        self.length * self.width
+    }
 
-    let spaces = "   ";
-    let spaces = spaces.len();
+    fn print(&self) {
+        println!("length is {}", self.length);
+        println!("width is {}", self.width);
+    }
+}
 
-    println!("THREE THREE_HOURS_IN_SECONDS is {THREE_HOURS_IN_SECONDS}");
-    println!("spaces is {spaces}");
+impl Rectangle {
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.length > other.length && self.width > other.width
+    }
+}
 
-    let guess: u32 = match "42somevalue ".trim().parse() {
-        Ok(num) => num,
-        Err(_) => {
-            println!("an error occured");
-            1 // providing a default value in case of error
+impl MathematicalObject for Square {
+    fn calculate_perimeter(&self) -> f64 {
+        4.0 * (self.side)
+    }
+
+    fn calculate_area(&self) -> f64 {
+        3.0 * PI * self.side * self.side
+    }
+
+    fn print(&self) {
+        println!("side of sqaure is {}", self.side);
+    }
+}
+
+impl User {
+    fn new() -> Self {
+        User {
+            active: false,
+            username: String::new(),
+            email: String::new(),
+            sign_in_count: 1,
         }
+    }
+
+    fn with_username(mut self, username: String) -> Self {
+        self.username = username;
+        self
+    }
+
+    fn with_email(mut self, email: String) -> Self {
+        self.email = email;
+        self
+    }
+
+    fn with_active(mut self, active: bool) -> Self {
+        self.active = active;
+        self
+    }
+}
+
+#[derive(Debug)]
+struct Color(i32, i32, i32);
+
+#[derive(Debug)]
+struct Point(i32, i32, i32);
+
+// unit like structs
+struct AlwaysEqual;
+
+fn main() {
+    let subject = AlwaysEqual;
+
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+
+    let mut user1 = User {
+        active: false,
+        username: String::from("surbhi"),
+        email: String::from("surbhi@gmail.com"),
+        sign_in_count: 12,
     };
 
-    let y = 3.21;
-    let z = -3.21;
+    let user2 = User::new()
+        .with_active(true)
+        .with_email(String::from("rg5353070@gmail.com"))
+        .with_username(String::from("_rahul321_"));
 
-    let sum = 5 + 10;
+    println!("user2 is {:#?}", user2);
 
-    // subtraction
-    let difference = 95.5 - 4.3;
+    let user3 = User {
+        email: String::from("ninaDobrev@example.com"),
+        ..user2
+    };
 
-    // multiplication
-    let product = 4 * 30;
+    // we can now longer user user2 since we moved some heap string values over to user3
+    // println!("user2 is {:?}", user2);
 
-    // division
-    let quotient = 56.7 / 32.2;
-    let truncated = -5 / 3; // Results in -1
+    println!("user3 is {:?}", user3);
 
-    // remainder
-    let remainder = 43 % 5;
+    println!("{:?}", user1.email);
+    user1.email = String::from("testing@gmail.com");
+    println!("{:?}", user1.email);
 
-    let c = 'Z';
-    let single: char = 'Z';
-    let _heart_eyed_cat = '😻';
+    let rect1 = Rectangle {
+        length: 12.4,
+        width: 65.7,
+    };
 
-    let tup = (1, 2, 3);
-    let tup1 = (1, 2.1, 3.3, false, "hello");
-    let greetings = ("hello", "HI", "BYE");
+    let rect2 = Rectangle {
+        length: 7.4,
+        width: 31.7,
+    };
 
-    let first = greetings.0;
-    let second = greetings.1;
-    let third = greetings.2;
+    rect1.can_hold(&rect2);
 
-    println!("greeting second {second}");
-}
+    let sq1 = Square { side: 12.4 };
 
-fn guessing_game() {
-    println!("Welcome to guessing game");
+    let rect1_area = rect1.calculate_area();
+    let rect1_perimiter = rect1.calculate_perimeter();
 
-    // generates a random number between a specified range
-    // inclusive on lower and upper bounds
-    let secret_number = rand::thread_rng().gen_range(1..=50);
+    rect1.print();
 
-    loop {
-        println!("please input your guess");
-        let mut guess = String::new();
-        io::stdin()
-            .read_line(&mut guess)
-            .expect("Failed to read line");
+    let sq1_area = sq1.calculate_area();
+    let sq1_perimeter = sq1.calculate_perimeter();
 
-        // converting the string guess to a number
-        let guess: u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue, //skip this iteration and move on the next
-        };
+    sq1.print();
 
-        println!("You guessed: {}", guess);
+    println!(
+        "rect1 area {:.2} and perimeter {:.2}",
+        rect1_area, rect1_perimiter
+    );
 
-        match guess.cmp(&secret_number) {
-            Ordering::Less => println!("Too small!!"),
-            Ordering::Equal => {
-                println!("guessed correctly");
-                println!("game over");
-                break;
-            }
-            Ordering::Greater => println!("Too big!!!"),
-        }
-    }
+    println!(
+        "sq1 area {:.2} and perimeter {:.2}",
+        sq1_area, sq1_perimeter
+    );
 }
