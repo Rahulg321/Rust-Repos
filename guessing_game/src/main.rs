@@ -1,87 +1,69 @@
-#[derive(Debug)]
-enum IpAddrKind {
-    V4,
-    V6,
+fn find_user(user_id: u32) -> Option<String> {
+    match user_id {
+        1 => Some(String::from("User One")),
+        10 => Some(String::from("User Ten")),
+        _ => None,
+    }
 }
 
 #[derive(Debug)]
-struct IpAddr {
-    kind: IpAddrKind,
-    address: String,
+enum UsState {
+    Alabama,
+    Alaska,
+    // --snip--
 }
 
-fn route(ip_kind: IpAddrKind) {
-    println!("version is {:?}", ip_kind);
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
 }
 
-#[derive(Debug)]
-enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-    ChangeColor(i32, i32, i32),
-}
-
-impl Message {
-    fn call(&self) {
-        println!("self is {:#?}", self);
-        match self {
-            Message::Quit => {
-                println!("The message is Quit");
-            }
-
-            Message::Move { x, y } => {
-                println!("Message is Move with x = {}, y = {}", x, y);
-            }
-            Message::Write(text) => {
-                println!("The message is Write with text: {}", text);
-            }
-            Message::ChangeColor(r, g, b) => {
-                println!(
-                    "The message is ChangeColor with RGB values: r = {}, g = {}, b = {}",
-                    r, g, b
-                );
-            }
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => {
+            println!("luckuy penny");
+            1
+        }
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state) => {
+            println!("us state is {state:?}");
+            25
         }
     }
 }
 
-fn process_message(msg: Message) {
-    match msg {
-        Message::Quit => println!("Received Quit message"),
-        Message::Move { x, y } => println!("Move to ({}, {})", x, y),
-        Message::Write(text) => println!("Message: {}", text),
-        Message::ChangeColor(r, g, b) => println!("Change color to RGB({}, {}, {})", r, g, b),
-    }
-}
-
-enum IpAddress {
-    V4(String),
-    V6(String),
-}
-
 fn main() {
-    let homeIp = IpAddress::V4(String::from("127.0.0.1"));
+    let c1 = Coin::Quarter(UsState::Alaska);
 
-    let home = IpAddr {
-        kind: IpAddrKind::V6,
-        address: String::from("127.0.0.1"),
+    value_in_cents(c1);
+
+    let user_id_to_find = 11; // Example: User not found
+                              //let user_id_to_find = 1; // Example: User found
+
+    let found_user = find_user(user_id_to_find);
+
+    // 1. Using match (most explicit and often preferred):
+    match found_user {
+        Some(name) => println!("Found user (match): {}", name),
+        None => println!("User with ID {} not found.", user_id_to_find),
+    }
+
+    let some_number = Some(5);
+    let some_char = Some('e');
+
+    let absent_number: Option<i32> = None;
+
+    let x = 5;
+    // let y = Some(5);
+    let y: Option<i32> = None;
+
+    let sum = match y {
+        Some(val) => val + x,
+        None => x,
     };
 
-    let loopback = IpAddr {
-        kind: IpAddrKind::V6,
-        address: String::from("::1"),
-    };
-
-    println!("ipaddress of home is is {:#?}", home);
-
-    let quit_message = Message::Quit;
-    let move_message = Message::Move { x: 10, y: 20 };
-    let write_message = Message::Write(String::from("Hello, world!"));
-    let color_message = Message::ChangeColor(255, 0, 0);
-
-    quit_message.call();
-    move_message.call();
-    write_message.call();
-    color_message.call();
+    println!("the sum is {sum}");
 }
