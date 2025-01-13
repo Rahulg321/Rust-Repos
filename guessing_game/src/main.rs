@@ -25,6 +25,24 @@ enum Message {
 impl Message {
     fn call(&self) {
         println!("self is {:#?}", self);
+        match self {
+            Message::Quit => {
+                println!("The message is Quit");
+            }
+
+            Message::Move { x, y } => {
+                println!("Message is Move with x = {}, y = {}", x, y);
+            }
+            Message::Write(text) => {
+                println!("The message is Write with text: {}", text);
+            }
+            Message::ChangeColor(r, g, b) => {
+                println!(
+                    "The message is ChangeColor with RGB values: r = {}, g = {}, b = {}",
+                    r, g, b
+                );
+            }
+        }
     }
 }
 
@@ -57,6 +75,13 @@ fn main() {
 
     println!("ipaddress of home is is {:#?}", home);
 
-    let m = Message::Write(String::from("hello"));
-    m.call();
+    let quit_message = Message::Quit;
+    let move_message = Message::Move { x: 10, y: 20 };
+    let write_message = Message::Write(String::from("Hello, world!"));
+    let color_message = Message::ChangeColor(255, 0, 0);
+
+    quit_message.call();
+    move_message.call();
+    write_message.call();
+    color_message.call();
 }
