@@ -40,7 +40,6 @@ fn median_and_mode(numbers: &Vec<i32>) -> (f64, Vec<i32>) {
 
 fn update_or_insert() {
     let text = "hello world wonderful world";
-
     let mut map = HashMap::new();
 
     for word in text.split_whitespace() {
