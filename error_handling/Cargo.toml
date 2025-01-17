@@ -1,0 +1,11 @@
+[profile.release]
+panic = 'abort'
+
+
+[package]
+name = "error_handling"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dotenv = "0.15"
